@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 
+#define G 9.81 
+
 typedef struct {
     char type;
     float v_max;
@@ -21,23 +23,50 @@ typedef struct {
     int is_destroyed;
 } EscortShip;
 
+float calculateRange(float velocity, float angle_degrees) {
+    float angle_radians = angle_degrees * (M_PI / 180.0);
+    float range = (velocity * velocity * sin(2 * angle_radians)) / G;
+    return range;
+}
+
+void saveInitialConditions(EscortShip e_ships[], int num_ships, Battleship b) {
+    FILE *file = fopen("results.txt", "w");
+    if (file == NULL) {
+        printf("Error opening file!\n");
+        return;
+    }
+    
+    fprintf(file, "Battleship Type: %c | Max Velocity: %.2f\n", b.type, b.v_max);
+    fprintf(file, "--- Escort Ships ---\n");
+    for (int i = 0; i < num_ships; i++) {
+        fprintf(file, "ID: %d | Type: %c | V_max: %.2f | Angle_max: %.2f\n", 
+                e_ships[i].id, e_ships[i].type, e_ships[i].v_max, e_ships[i].angle_max);
+    }
+    
+    fclose(file);
+    printf("Initial conditions saved to results.txt\n");
+}
+
 void startSimulation() {
     printf("Simulation starting...\n");
-    // Part 1 logic will go here
 }
 
 void showSetup() {
     int setup_choice;
+    int status;
     printf("\n--- Setup Menu ---\n");
     printf("1. Battleship Properties\n2. Escort Ships Settings\n3. Seed Value\n4. Return to Main Menu\n");
     printf("Enter choice: ");
-    scanf("%d", &setup_choice);
+    status = scanf("%d", &setup_choice);
+    if (status != 1) {
+        while (getchar() != '\n'); 
+        setup_choice = 0; 
+    }
 }
 
 int main() {
-    int main() {
     int choice;
-    int status; // Tracks if scanf successfully read a number
+    int status; 
 
     do {
         printf("\n--- Naval Battle Simulator ---\n");
@@ -46,10 +75,9 @@ int main() {
         
         status = scanf("%d", &choice);
 
-        // If the user inputs a letter, clear the buffer to prevent the infinite loop
         if (status != 1) {
             while (getchar() != '\n'); 
-            choice = 0; // Forces the switch statement to the 'default' error case
+            choice = 0; 
         }
 
         switch(choice) {

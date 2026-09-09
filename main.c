@@ -35,12 +35,22 @@ void showSetup() {
 }
 
 int main() {
+    int main() {
     int choice;
+    int status; // Tracks if scanf successfully read a number
+
     do {
         printf("\n--- Naval Battle Simulator ---\n");
         printf("1. Start Simulation\n2. View Instructions\n3. Simulation Statistics\n4. Exit\n");
         printf("Enter choice: ");
-        scanf("%d", &choice);
+        
+        status = scanf("%d", &choice);
+
+        // If the user inputs a letter, clear the buffer to prevent the infinite loop
+        if (status != 1) {
+            while (getchar() != '\n'); 
+            choice = 0; // Forces the switch statement to the 'default' error case
+        }
 
         switch(choice) {
             case 1:
@@ -57,7 +67,7 @@ int main() {
                 printf("\nExiting simulator. Goodbye!\n");
                 break;
             default:
-                printf("\nInvalid choice. Please try again.\n");
+                printf("\nInvalid choice. Please enter a number between 1 and 4.\n");
         }
     } while (choice != 4);
 

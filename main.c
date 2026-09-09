@@ -48,9 +48,61 @@ void saveInitialConditions(EscortShip e_ships[], int num_ships, Battleship b) {
 }
 
 void startSimulation() {
-    printf("Simulation starting...\n");
+    int n_ships;
+    float canvas_size;
+    char b_type;
+    
+    printf("\n--- Start Simulation (Part 1-A) ---\n");
+    printf("Enter Battleship type notation (U, M, R, or S): ");
+    scanf(" %c", &b_type);
+    
+    printf("Enter canvas grid size (e.g., 100.0): ");
+    scanf("%f", &canvas_size);
+    
+    printf("Enter number of escort ships (N): ");
+    scanf("%d", &n_ships);
+    
+    Battleship b = {b_type, 50.0, 0.01, 1.0};
+    
+    EscortShip *e_ships = malloc(n_ships * sizeof(EscortShip));
+    if (e_ships == NULL) {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+    
+    char types[] = {'A', 'B', 'C', 'D', 'E'};
+    for (int i = 0; i < n_ships; i++) {
+        e_ships[i].id = i + 1;
+        e_ships[i].type = types[rand() % 5];
+        e_ships[i].v_max = 10.0 + (rand() % 20);
+        e_ships[i].angle_max = 45.0;
+        e_ships[i].is_destroyed = 0;
+    }
+    
+    saveInitialConditions(e_ships, n_ships, b);
+    
+    // Simple simulation logic check for Part 1-A
+    int hit_count = 0;
+    for (int i = 0; i < n_ships; i++) {
+        // Test a sample attack range calculation
+        float sample_range = calculateRange(e_ships[i].v_max, e_ships[i].angle_max);
+        if (sample_range <= canvas_size) {
+            hit_count++;
+            e_ships[i].is_destroyed = 1;
+        }
+    }
+    
+    printf("Simulation completed! Escort ships hit by Battleship: %d\n", hit_count);
+    
+    // Save final stats
+    FILE *final_file = fopen("results.txt", "a");
+    if (final_file != NULL) {
+        fprintf(final_file, "Simulation Results: %d escort ships were hit.\n", hit_count);
+        fclose(final_file);
+    }
+    
+    free(e_ships);
 }
-
 void showSetup() {
     int setup_choice;
     int status;

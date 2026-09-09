@@ -116,6 +116,21 @@ void showSetup() {
     }
 }
 
+void showStatistics() {
+    FILE *file = fopen("results.txt", "r");
+    if (file == NULL) {
+        printf("\nNo past simulation results found. Run a simulation first!\n");
+        return;
+    }
+
+    printf("\n--- Past Simulation Statistics ---\n");
+    char buffer[256];
+    while (fgets(buffer, sizeof(buffer), file) != NULL) {
+        printf("%s", buffer);
+    }
+    fclose(file);
+}
+
 int main() {
     int choice;
     int status; 
@@ -141,8 +156,8 @@ int main() {
                 printf("\nInstructions: The battleship must minimize impact while destroying escort ships.\n");
                 break;
             case 3:
-                printf("\nSimulation Statistics: Loading past results from text file...\n");
-                break;
+                showStatistics();
+                break;                
             case 4:
                 printf("\nExiting simulator. Goodbye!\n");
                 break;
